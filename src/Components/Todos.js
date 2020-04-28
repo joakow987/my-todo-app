@@ -3,7 +3,8 @@ import '../ComponentsCSS/Todos.css';
 
 // bez () => w onChange
 
-function Todos(props) {
+function Todos({todos, onClick}) {
+
     function addMyStyle(checked) {
         return {
             textDecoration: checked ? "line-through" : 'none'
@@ -12,19 +13,19 @@ function Todos(props) {
     }
 
     return (
-
         <div>
-            {props.todos.map((todo, index) => {
+            {todos ? todos.map((todo, index) => {
                 return (
                     <div className="todo" key={index} style={addMyStyle(todo.checked)}  >
                         <input
                             type="checkbox"
                             checked={todo.checked}
-                            onChange={() => props.onClick(todo)} />
+                            onChange={() => onClick(todo)} />
                         <span id="todoValue">{todo.value}</span>
                     </div>
                 )
-            })}
+            })
+                : null}
         </div>
 
     )
