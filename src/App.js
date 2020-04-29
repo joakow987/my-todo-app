@@ -8,61 +8,56 @@ class App extends React.Component {
     constructor() {
         super();
         this.state = {
-            lists: [], // array de [{name: "name", list: todos}
+            lists: [], // array de names 
+            displayTodoList: false,
             inputValue: "",
-            todos: {}, // {listName: [todos]}
+            todos: {}, // objeto de key: list pair
             currentList: ""
         }
     }
-    startTodoList = event => {
+    startTodoList = (event) => {
         event.preventDefault();
         this.setState(prevState => ({
-            currentList: this.state.inputValue,
+            lists: this.state.lists.includes(this.state.inputValue) ? this.state.lists : [...prevState.lists, this.state.inputValue],
+            displayTodoList: true,
             inputValue: "",
-            lists: prevState.lists.includes(this.state.inputValue) ? [...prevState.lists] : [...prevState.lists, this.state.inputValue],
-            todos: prevState.lists.includes(this.state.inputValue) ? {...prevState.todos} : {...prevState.todos, [this.state.inputValue]: []}
+            currentList: this.state.inputValue
         }))
     }
     handleInputChange = event => {
-        event.preventDefault();
         this.setState({
             inputValue: event.target.value
         })
     }
 
     addTodo = (event) => {
-        console.log(this.state);
+        event.preventDefault();
         if (this.state.inputValue !== "") {
             this.setState(prevState => ({
                 inputValue: "",
-                todos: {
-                    ...prevState.todos, [this.state.currentList]: [...prevState.todos[this.state.currentList], {value: this.state.inputValue, checked: false}]
-                }
+                todos: {...prevState.todos, [this.state.currentList]: [...prevState.todos[this.state.currentList], {value: this.state.inputValue, checked: false}]}
             }))
         }
     }
 
     handleCheckboxClick = ({value, checked}) => {
-        this.setState(prevState => ({
-            todos: {...prevState.todos, [this.state.currentList]: prevState.todos[this.state.currentList].map(todo => value === todo.value ? {value, checked: !checked} : todo)}
-        }))
-    }
-
-    finishEdit = (event) => {
-        event.preventDefault();
         this.setState({
-            inputValue: "",
-            currentList: ""
+            todos: this.state.todos.map(todo => value === todo.value ? {value, checked: !checked} : todo)
         })
     }
-    render() {
 
+    finishList = () => {
+        this.setState(prevState => ({
+            lists: [...prevState.lists, prevState.lists[prevState.lists.length - 1].list.push(this.state.todos)]
+        }), () => console.log('state', this.state))
+    }
+    render() {
         return (
             <Grid id="app" container justify="center">
-                {this.state.currentList
+                {this.state.displayTodoList
                     ?
                     <div>
-                        <form onSubmit={this.finishEdit}>
+                        <form onSubmit={this.finishList}>
                             <div className="inputBox">
                                 <TextField id="outlined-basic" variant="outlined" onChange={this.handleInputChange} value={this.state.inputValue} />
                             </div>

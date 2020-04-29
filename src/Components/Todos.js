@@ -1,8 +1,6 @@
 import React from 'react';
 import '../ComponentsCSS/Todos.css';
 
-// bez () => w onChange
-
 function Todos({todos, onClick}) {
 
     function addMyStyle(checked) {
@@ -16,7 +14,7 @@ function Todos({todos, onClick}) {
         <div>
             {todos ? todos.map((todo, index) => {
                 return (
-                    <div className="todo" key={index} style={addMyStyle(todo.checked)}  >
+                    <div className="todo" key={index} style={addMyStyle(todo.checked)} >
                         <input
                             type="checkbox"
                             checked={todo.checked}
