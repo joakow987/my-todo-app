@@ -9,7 +9,6 @@ class App extends React.Component {
         super();
         this.state = {
             lists: [], // array de names 
-            displayTodoList: false,
             inputValue: "",
             todos: {}, // objeto de key: list pair
             currentList: ""
@@ -19,9 +18,9 @@ class App extends React.Component {
         event.preventDefault();
         this.setState(prevState => ({
             lists: this.state.lists.includes(this.state.inputValue) ? this.state.lists : [...prevState.lists, this.state.inputValue],
-            displayTodoList: true,
             inputValue: "",
-            currentList: this.state.inputValue
+            currentList: this.state.inputValue,
+            todos: this.state.lists.includes(this.state.inputValue) ? this.state.todos : {...prevState.todos, [this.state.inputValue]: []}
         }))
     }
     handleInputChange = event => {
@@ -41,20 +40,20 @@ class App extends React.Component {
     }
 
     handleCheckboxClick = ({value, checked}) => {
-        this.setState({
-            todos: this.state.todos.map(todo => value === todo.value ? {value, checked: !checked} : todo)
-        })
+        this.setState(prevState => ({
+            todos: {...prevState.todos, [this.state.currentList]: prevState.todos[this.state.currentList].map(todo => value === todo.value ? {value, checked: !checked} : todo)}
+        }))
     }
 
     finishList = () => {
-        this.setState(prevState => ({
-            lists: [...prevState.lists, prevState.lists[prevState.lists.length - 1].list.push(this.state.todos)]
-        }), () => console.log('state', this.state))
+        this.setState({
+            currentList: ""
+        })
     }
     render() {
         return (
             <Grid id="app" container justify="center">
-                {this.state.displayTodoList
+                {this.state.currentList
                     ?
                     <div>
                         <form onSubmit={this.finishList}>
