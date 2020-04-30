@@ -1,5 +1,5 @@
 import React from 'react';
-import {TextField, Button, Grid} from '@material-ui/core'
+import {TextField, Button, Grid, MenuList} from '@material-ui/core'
 import './App.css';
 import Todos from './Components/Todos';
 
@@ -17,10 +17,10 @@ class App extends React.Component {
     startTodoList = (event) => {
         event.preventDefault();
         this.setState(prevState => ({
-            lists: this.state.lists.includes(this.state.inputValue) ? this.state.lists : [...prevState.lists, this.state.inputValue],
+            lists: this.state.lists.includes(this.state.inputValue) ? this.state.lists : [...this.state.lists, this.state.inputValue],
             inputValue: "",
             currentList: this.state.inputValue,
-            todos: this.state.lists.includes(this.state.inputValue) ? this.state.todos : {...prevState.todos, [this.state.inputValue]: []}
+            todos: this.state.lists.includes(this.state.inputValue) ? this.state.todos : {...this.state.todos, [this.state.inputValue]: []}
         }))
     }
     handleInputChange = event => {
@@ -39,6 +39,10 @@ class App extends React.Component {
         }
     }
 
+    deleteTodo = () => {
+
+    }
+
     handleCheckboxClick = ({value, checked}) => {
         this.setState(prevState => ({
             todos: {...prevState.todos, [this.state.currentList]: prevState.todos[this.state.currentList].map(todo => value === todo.value ? {value, checked: !checked} : todo)}
@@ -50,9 +54,16 @@ class App extends React.Component {
             currentList: ""
         })
     }
+
+    deleteTodo = (value) => {
+        this.setState({
+            todos: {...this.state.todos, [this.state.currentList]: this.state.todos[this.state.currentList].filter(todo => todo.value !== value)}
+        })
+    }
     render() {
         return (
             <Grid id="app" container justify="center">
+                <MenuList />
                 {this.state.currentList
                     ?
                     <div>
@@ -63,7 +74,7 @@ class App extends React.Component {
                             <Button id="submitButton" variant="contained" color="primary" onClick={this.addTodo}>Add a todo</Button>
                             <Button id="finishButton" variant="contained" color="primary" type="submit">Finish list</Button>
                         </form>
-                        <Todos todos={this.state.todos[this.state.currentList]} onClick={this.handleCheckboxClick} />
+                        <Todos todos={this.state.todos[this.state.currentList]} onClick={this.handleCheckboxClick} onDeleteIconClick={this.deleteTodo} />
                     </div>
                     :
                     < form onSubmit={this.startTodoList}>
